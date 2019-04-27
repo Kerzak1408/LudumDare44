@@ -44,11 +44,17 @@ public class PlayerController : MonoBehaviour
         Direction = Direction.normalized;
 
         var delta = Time.deltaTime * Direction * speed;
-        this.transform.position += delta;
-        MainCamera.transform.position += delta;
+        var newPlayerPosition = this.transform.position + delta;
+
+        //newPlayerPosition.x = Mathf.Min(newPlayerPosition.x, 13.5f);
+        //newPlayerPosition.y = Mathf.Min(newPlayerPosition.y, 13.5f);
+        //newPlayerPosition.x = Mathf.Max(newPlayerPosition.x, -13.5f);
+        //newPlayerPosition.y = Mathf.Max(newPlayerPosition.y, -13.5f);
+
+        this.transform.position = newPlayerPosition;
+        MainCamera.transform.position = new Vector3(newPlayerPosition.x, newPlayerPosition.y, MainCamera.transform.position.z); ;
 
         var angleRadians = Mathf.Atan2(delta.x, delta.y);
-        Debug.Log("Angle = " + angleRadians);
         var eulerAngles = this.transform.eulerAngles;
         this.transform.eulerAngles = new Vector3(eulerAngles.x, eulerAngles.y, -Mathf.Rad2Deg * angleRadians);
     }
