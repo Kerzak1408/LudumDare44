@@ -22,7 +22,14 @@ public class PlayerController : MonoBehaviour
             var direction = mousePosition - transform.position;
             direction = direction.normalized;
 
-            this.transform.position += Time.deltaTime * direction * speed;
+            var delta = Time.deltaTime * direction * speed;
+            this.transform.position += delta;
+            MainCamera.transform.position += delta;
+
+            var angleRadians = Mathf.Atan2(delta.x, delta.y);
+            Debug.Log("Angle = " + angleRadians);
+            var eulerAngles = this.transform.eulerAngles;
+            this.transform.eulerAngles = new Vector3(eulerAngles.x, eulerAngles.y, -Mathf.Rad2Deg * angleRadians);
         }
 	}
 }
