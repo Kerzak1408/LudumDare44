@@ -8,12 +8,15 @@ public class Bullet : MonoBehaviour
 
     private Vector3 direction;
     private bool shooting = false;
-    private float timeToLive = 3;    
+    private float timeToLive = 3;
 
-    public void Shoot(Vector3 direction)
+    private PlayerController owner;
+
+    public void Shoot(Vector3 direction, PlayerController owner)
     {
         this.direction = direction;
         this.shooting = true;
+        this.owner = owner;
     }
 
     public void Update()
@@ -27,5 +30,15 @@ public class Bullet : MonoBehaviour
                 Destroy(this.gameObject);
             }
         }
+    }
+
+    public void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.GetComponent<PlayerController>() == owner)
+        {
+            return;
+        }
+
+        Destroy(this.gameObject);
     }
 }
