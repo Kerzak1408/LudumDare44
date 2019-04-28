@@ -2,21 +2,31 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : PlayerControllerBase
 {
     public Camera MainCamera;
     public float speed = 5f;
+    public Text TimeText;
+    public GameManager GameManager;
 
-    public Vector3 Direction { get; private set; }
-
-    void Start()
+    protected override void Start()
     {
+        base.Start();
         Direction = Vector3.up;	
 	}
 	
-	void Update()
+	protected override void Update()
     {
+        base.Update();
+
+        int minutes = (int) SecondsLeft / 60;
+        int seconds = (int) SecondsLeft - minutes * 60;
+        string minutesString = minutes < 10 ? "0" + minutes : minutes.ToString();
+        string secondsString = seconds < 10 ? "0" + seconds : seconds.ToString();
+        this.TimeText.text = minutesString + ":" + secondsString;
+
 #if UNITY_ANDROID && !UNITY_EDITOR
         foreach (var touch in Input.touches)
         {
@@ -39,17 +49,12 @@ public class PlayerController : MonoBehaviour
     {
         clickPosition = MainCamera.ScreenToWorldPoint(clickPosition);
         clickPosition = new Vector3(clickPosition.x, clickPosition.y, 0);
-        Direction = clickPosition - transform.position;
+        Direction = transform.position - clickPosition;
         Direction = new Vector3(Direction.x, Direction.y, 0);
         Direction = Direction.normalized;
 
         var delta = Time.deltaTime * Direction * speed;
         var newPlayerPosition = this.transform.position + delta;
-
-        //newPlayerPosition.x = Mathf.Min(newPlayerPosition.x, 13.5f);
-        //newPlayerPosition.y = Mathf.Min(newPlayerPosition.y, 13.5f);
-        //newPlayerPosition.x = Mathf.Max(newPlayerPosition.x, -13.5f);
-        //newPlayerPosition.y = Mathf.Max(newPlayerPosition.y, -13.5f);
 
         this.transform.position = newPlayerPosition;
         MainCamera.transform.position = new Vector3(newPlayerPosition.x, newPlayerPosition.y, MainCamera.transform.position.z); ;
@@ -66,5 +71,11 @@ public class PlayerController : MonoBehaviour
         List<RaycastResult> results = new List<RaycastResult>();
         EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
         return results.Count > 0;
+    }
+
+    public override void OnKill()
+    {
+        GameManager.GameOver("You lost. :(");
+        base.OnKill();
     }
 }
