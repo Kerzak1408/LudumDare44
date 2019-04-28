@@ -10,9 +10,9 @@ public class Bullet : MonoBehaviour
     private bool shooting = false;
     private float timeToLive = 3;
 
-    private PlayerController owner;
+    private PlayerControllerBase owner;
 
-    public void Shoot(Vector3 direction, PlayerController owner)
+    public void Shoot(Vector3 direction, PlayerControllerBase owner)
     {
         this.direction = direction;
         this.shooting = true;
@@ -34,9 +34,16 @@ public class Bullet : MonoBehaviour
 
     public void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.GetComponent<PlayerController>() == owner)
+        var playerController = other.gameObject.GetComponent<PlayerControllerBase>();
+        if (playerController == this.owner)
         {
             return;
+        }
+
+        if (playerController != null)
+        {
+            this.owner.AddTime(playerController.SecondsLeft);
+            Destroy(other.gameObject);
         }
 
         Destroy(this.gameObject);

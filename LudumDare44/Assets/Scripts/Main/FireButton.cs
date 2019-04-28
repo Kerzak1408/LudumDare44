@@ -20,9 +20,6 @@ public class FireButton : MonoBehaviour {
 
     public void Shoot()
     {
-        var bulletObject = Instantiate(Resources.Load<GameObject>("Prefabs/Bullet"));
-        bulletObject.transform.position = player.transform.position;
-        var bullet = bulletObject.GetComponent<Bullet>();
-        bullet.Shoot(player.Direction, player);
+        player.Shoot();
     }
 }
