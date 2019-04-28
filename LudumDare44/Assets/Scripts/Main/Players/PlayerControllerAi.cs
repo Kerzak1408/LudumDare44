@@ -1,12 +1,17 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class PlayerControllerAi : PlayerControllerBase
 {
     public float speed = 5f;
 
     private float timeout = 0f;
+
+    public GameManager GameManager;
 
     // Use this for initialization
     protected override void Start () {
@@ -20,6 +25,20 @@ public class PlayerControllerAi : PlayerControllerBase
         base.Update();
         ChangeDirection();
         MovePlayer();
+        ConsiderShooting();
+    }
+
+    private void ConsiderShooting()
+    {
+        //if (UnityEngine.Random.value < Time.deltaTime)
+        {
+            var ray = new Ray(transform.position, Direction);
+            var hits = Physics.RaycastAll(ray, 4);
+            if (hits.Any(hit => hit.transform.gameObject.GetComponent<PlayerControllerBase>() != null))
+            {
+                Shoot();
+            }
+        }
     }
 
     private void ChangeDirection()
@@ -38,5 +57,11 @@ public class PlayerControllerAi : PlayerControllerBase
         var angleRadians = Mathf.Atan2(delta.x, delta.y);
         var eulerAngles = this.transform.eulerAngles;
         this.transform.eulerAngles = new Vector3(eulerAngles.x, eulerAngles.y, -Mathf.Rad2Deg * angleRadians);
+    }
+
+    public override void OnKill()
+    {
+        GameManager.ReportKilled(this);
+        base.OnKill();
     }
 }

@@ -43,7 +43,7 @@ public class Bullet : MonoBehaviour
         if (playerController != null)
         {
             this.owner.AddTime(playerController.SecondsLeft);
-            Destroy(other.gameObject);
+            playerController.OnKill();
         }
 
         Destroy(this.gameObject);

@@ -2,10 +2,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     bool aiMode = true;
+
+    public GameObject LocalPlayer;
+
+    public GameObject EndGamePanel;
+
+    private List<PlayerControllerAi> aiPlayers;
 
 	void Start ()
     {
@@ -16,6 +23,8 @@ public class GameManager : MonoBehaviour
 
         if (aiMode)
         {
+            LocalPlayer.GetComponent<PlayerController>().GameManager = this;
+            aiPlayers = new List<PlayerControllerAi>();
             LoadAiGame();
         }
         else
@@ -30,6 +39,9 @@ public class GameManager : MonoBehaviour
         {
             var aiPlayer = Instantiate(Resources.Load("Prefabs/AiPlayer")) as GameObject;
             aiPlayer.transform.position = new Vector3(RandomCoordinate(), RandomCoordinate(), 1);
+            var aiScript = aiPlayer.GetComponent<PlayerControllerAi>();
+            aiScript.GameManager = this;
+            aiPlayers.Add(aiScript);
         }
     }
 
@@ -42,4 +54,30 @@ public class GameManager : MonoBehaviour
     void Update () {
 		
 	}
+
+    public void GameOver(string message)
+    {
+        this.EndGamePanel.SetActive(true);
+        this.EndGamePanel.GetComponentInChildren<Text>().text = message;
+    }
+
+    public void ReportKilled(PlayerControllerAi playerControllerAi)
+    {
+        aiPlayers.Remove(playerControllerAi);
+        if (aiPlayers.Count == 0)
+        {
+            this.EndGamePanel.SetActive(true);
+            this.EndGamePanel.GetComponentInChildren<Text>().text = "You won. :)";
+        }
+    }
+
+    public void GoToMenu()
+    {
+        Scenes.Load("MenuScene");
+    }
+
+    public void Restart()
+    {
+        Scenes.Load("MainScene", Scenes.Parameters, Scenes.ObjParams);
+    }
 }

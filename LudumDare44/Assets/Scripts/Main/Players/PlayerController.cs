@@ -9,6 +9,7 @@ public class PlayerController : PlayerControllerBase
     public Camera MainCamera;
     public float speed = 5f;
     public Text TimeText;
+    public GameManager GameManager;
 
     protected override void Start()
     {
@@ -70,5 +71,11 @@ public class PlayerController : PlayerControllerBase
         List<RaycastResult> results = new List<RaycastResult>();
         EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
         return results.Count > 0;
+    }
+
+    public override void OnKill()
+    {
+        GameManager.GameOver("You lost. :(");
+        base.OnKill();
     }
 }

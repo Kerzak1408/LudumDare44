@@ -8,16 +8,21 @@ public abstract class PlayerControllerBase : MonoBehaviour
 
     protected virtual void Start()
     {
-        this.SecondsLeft = 120;
+        this.SecondsLeft = 60;
     }
 
     protected virtual void Update()
     {
         SecondsLeft -= Time.deltaTime;
         if (SecondsLeft <= 0)
-        {
-            Destroy(this.gameObject);
+        {            
+            this.OnKill();
         }
+    }
+
+    public virtual void OnKill()
+    {
+        Destroy(this.gameObject);
     }
 
     public virtual void Shoot()
