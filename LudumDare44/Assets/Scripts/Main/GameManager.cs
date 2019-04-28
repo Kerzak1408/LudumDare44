@@ -19,7 +19,9 @@ public class GameManager : MonoBehaviour
         if (Scenes.ObjParams != null && Scenes.ObjParams.ContainsKey("ai"))
         {
             aiMode = (bool)Scenes.GetObjParam("ai");
-        }    
+        }
+
+        LoadEnvironment();
 
         if (aiMode)
         {
@@ -32,6 +34,21 @@ public class GameManager : MonoBehaviour
 
         }
 	}
+
+    private void LoadEnvironment()
+    {
+        for (int i = 0; i < UnityEngine.Random.Range(3, 10); i++)
+        {
+            var tree = Instantiate(Resources.Load<GameObject>("Prefabs/Tree"));
+            tree.transform.position = new Vector3(RandomCoordinate(), RandomCoordinate(), 0.5f);
+        }
+
+        for (int i = 0; i < UnityEngine.Random.Range(3, 10); i++)
+        {
+            var obstacle = Instantiate(Resources.Load<GameObject>("Prefabs/Obstacle"));
+            obstacle.transform.position = new Vector3(RandomCoordinate(), RandomCoordinate(), 1f);
+        }
+    }
 
     private void LoadAiGame()
     {
